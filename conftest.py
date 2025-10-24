@@ -5,6 +5,7 @@ from faker import Faker
 from selenium.webdriver.chrome.options import Options as ChromeOptions, Options
 from selenium import webdriver
 
+import config
 from data import Recipe
 
 
@@ -30,32 +31,20 @@ def picture_path():
 
 
 
-REMOTE_DRIVER = True
 
 @pytest.fixture
 @allure.title("подключаем удаленный/локальный драйвер в зависимости от настройки конфига")
-def driver():
-    if REMOTE_DRIVER:
-        options = Options()
+def remote_driver():
+    if config.remote_driver:
+        options = ChromeOptions()
         options.set_capability("browserName", "chrome")
-        options.set_capability("browserVersion", "128.0")  # ИСПРАВЛЕНО: 128.0 вместо 120.0
-        options.set_capability("selenoid:options", {
-            "enableVNC": True,
-            "enableVideo": False
-        })
+        options.set_capability("browserVersion", "128.0")
+        options.set_capability("selenoid:options", {"enableVNC": True})
+        options.set_capability("selenoid:options", {"enableVideo": False})
 
-        driver = webdriver.Remote(
-            command_executor='http://selenoid:4444/wd/hub',
-            options=options
-        )
+        remote_driver = webdriver.Remote(command_executor='http://selenoid:4444/wd/hub', options=options)
     else:
-        # Локальный драйвер
-        options = Options()
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--window-size=1920,1080")
-        driver = webdriver.Chrome(options=options)
+        remote_driver = webdriver.Chrome()
 
-    driver.implicitly_wait(10)
-    yield driver
-    driver.quit()
+    yield remote_driver
+    remote_driver.quit()

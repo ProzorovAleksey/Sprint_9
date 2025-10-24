@@ -7,9 +7,9 @@ from pages.login_page import LoginPage
 class TestAuthorization:
 
     @allure.suite('Авторизация')
-    def test_successful_authorization(self, driver):
+    def test_successful_authorization(self, remote_driver):
 
-        login_page = LoginPage(driver)
+        login_page = LoginPage(remote_driver)
 
         with allure.step("Открываем страницу входа"):
             login_page.open_page(Url.LOG_URL)

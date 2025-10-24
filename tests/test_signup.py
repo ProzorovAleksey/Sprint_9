@@ -7,9 +7,9 @@ from pages.signup_page import SignUp
 class TestSignUp:
     @allure.suite('Регистрация')
 
-    def test_registration_using_complete_method(self, driver, create_user):
+    def test_registration_using_complete_method(self, remote_driver, create_user):
 
-        sign_up =SignUp(driver)
+        sign_up =SignUp(remote_driver)
 
         with allure.step("Открыть страницу регистрации"):
             sign_up.open_page(Url.REG_URL)
