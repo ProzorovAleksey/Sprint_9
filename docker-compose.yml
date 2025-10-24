@@ -2,19 +2,19 @@ services:
 
   selenoid:
     image: "aerokube/selenoid"
-    container_name: selenoid
+    container_name: selenoid_123
     ports:
       - "4444:4444"
     networks:
       - selenoid
     volumes:
-      - "./selenoid/browsers.json:/etc/browsers.json:ro"
+      - "./selenoid/browsers.json:/etc/selenoid/browsers.json:ro"
       - "/var/run/docker.sock:/var/run/docker.sock"
-    command: ["-conf", "/etc/browsers.json", "-container-network", "selenoid_net"]
+    command: ["-conf", "/etc/selenoid/browsers.json", "-container-network", "selenoid"]
 
   selenoid-ui:
     image: "aerokube/selenoid-ui:latest"
-    container_name: selenoid-ui
+    container_name: selenoid-ui_123
     links:
       - selenoid
     ports:
@@ -25,7 +25,7 @@ services:
 
   test_docker:
     build: .
-    container_name: test_docker
+    container_name: test_docker_123
     depends_on:
       - selenoid
     networks:
@@ -43,3 +43,5 @@ networks:
   selenoid:
     name: selenoid_net
     driver: bridge
+
+

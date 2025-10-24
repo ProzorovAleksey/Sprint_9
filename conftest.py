@@ -2,7 +2,7 @@ import allure
 import pytest
 from pathlib import Path
 from faker import Faker
-from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.chrome.options import Options as ChromeOptions, Options
 from selenium import webdriver
 
 from data import Recipe
@@ -29,16 +29,16 @@ def picture_path():
         pytest.skip(f"Test image {path} not found")
 
 
-REMOTE_DRIVER = False   # признак использования удаленного WebDriver из Селеноида при запуске в docker-контейнере
 
+REMOTE_DRIVER = True
 
 @pytest.fixture
-@allure.title("Подключаем удаленный или локальный драйвер в зависимости от флага REMOTE_DRIVER")
+@allure.title("подключаем удаленный/локальный драйвер в зависимости от настройки конфига")
 def driver():
     if REMOTE_DRIVER:
-        options = ChromeOptions()
+        options = Options()
         options.set_capability("browserName", "chrome")
-        options.set_capability("browserVersion", "114.0")
+        options.set_capability("browserVersion", "128.0")  # ИСПРАВЛЕНО: 128.0 вместо 120.0
         options.set_capability("selenoid:options", {
             "enableVNC": True,
             "enableVideo": False
@@ -49,8 +49,13 @@ def driver():
             options=options
         )
     else:
-        driver = webdriver.Chrome()
+        # Локальный драйвер
+        options = Options()
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--window-size=1920,1080")
+        driver = webdriver.Chrome(options=options)
 
-    driver.maximize_window()
+    driver.implicitly_wait(10)
     yield driver
     driver.quit()

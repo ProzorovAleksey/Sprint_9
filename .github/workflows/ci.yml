@@ -2,7 +2,7 @@ name: Sprint_9 autotests
 on:
   push:
     branches:
-      develop
+      - develop
 jobs:
   run-selenoid-tests:
     runs-on: ubuntu-latest
